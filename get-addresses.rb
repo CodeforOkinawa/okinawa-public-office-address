@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# ./get-addresses.rb > get-lat-lag.rb
+# ./get-addresses.rb > get-lat-lng.rb
 
 require 'rubygems'
 require 'bundler/setup'
