@@ -1,3 +1,35 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler/setup'
+require 'json'
+require 'uri'
+require 'open-uri'
+require 'csv'
+
+CSV.open('addresses.csv', 'w:CP932:UTF-8', row_sep:"\r\n") do |csv|
+  csv << %w(自治体名 住所 lat lng)
+  rows = DATA.readlines.map{|t|t.split(',').map(&:strip)}
+  rows.each do |city, address|
+    json = JSON.parse(open("http://maps.google.com/maps/api/geocode/json?address=#{URI.escape(address)}&sensor=false").read)
+    sleep 1
+    puts json
+
+    unless json['status'] == 'OK' && json['results'] && (json['results'].size == 1 || json['results'].empty?)
+      STDERR.puts "#{city}、#{address}の結果が#{json['results'].size}個です"
+      next
+    end
+
+    result = json['results'][0]
+
+    lat = result['geometry']['location']['lat']
+    lng = result['geometry']['location']['lng']
+    link = "https://www.google.co.jp/maps/preview?q=#{lat},#{lng}"
+    csv << [city, address, lat, lng, link]
+  end
+end
+
+__END__
 那覇市,那覇市泉崎1-1-1
 宜野湾市,宜野湾市字野嵩1-1-1
 石垣市,石垣市美崎町14
