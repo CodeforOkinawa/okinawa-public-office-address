@@ -8,7 +8,7 @@ require 'open-uri'
 require 'csv'
 
 CSV.open('addresses.csv', 'w:CP932:UTF-8', row_sep:"\r\n") do |csv|
-  csv << %w(自治体名 住所 lat lng)
+  csv << %w(自治体名 住所 lat lng GoogleMapsへのリンク)
   rows = DATA.readlines.map{|t|t.split(',').map(&:strip)}
   rows.each do |city, address|
     json = JSON.parse(open("http://maps.google.com/maps/api/geocode/json?address=#{URI.escape(address)}&sensor=false").read)
